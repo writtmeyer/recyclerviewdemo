@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<transitionSet xmlns:android="http://schemas.android.com/apk/res/android">
+    <changeBounds>
+        <targets>
+            <target android:targetId="@id/container_inner_item" android:targetViewName="innerContainer"/>
+            <target android:targetId="@id/container_inner_item" android:targetViewName="innerContainer"/>
+        </targets>
+    </changeBounds>
+    <changeTransform>
+        <targets>
+            <target android:targetId="@id/container_inner_item" android:targetViewName="innerContainer"/>
+            <target android:targetId="@id/container_inner_item" android:targetViewName="innerContainer"/>
+        </targets>
+    </changeTransform>
+</transitionSet>

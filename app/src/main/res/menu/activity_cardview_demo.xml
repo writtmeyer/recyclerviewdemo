@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".RecyclerViewDemoActivity" >
+    <item android:id="@+id/action_remove"
+        android:icon="@drawable/ic_action_remove"
+        android:title="@string/action_remove"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom" />
+</menu>
