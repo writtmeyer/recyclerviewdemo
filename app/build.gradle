@@ -5,7 +5,7 @@ android {
     buildToolsVersion "20.0.0"
 
     defaultConfig {
-        applicationId "recyclerview.samples.sampleapp.grokkingandroid.com.recyclerviewdemo"
+        applicationId "com.grokkingandroid.samples.sampleapp.recyclerviewdemo"
         minSdkVersion 'L'
         targetSdkVersion 'L'
         versionCode 1
