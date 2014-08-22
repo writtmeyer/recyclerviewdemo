@@ -39,14 +39,16 @@ public class RecyclerViewDemoApp extends Application {
         return new ArrayList<DemoModel>(demoData);
     }
 
-    public static final void addItemToList(DemoModel model, int position) {
+    public static final List<DemoModel> addItemToList(DemoModel model, int position) {
         demoData.add(position, model);
         demoMap.put(model.id, model);
+        return new ArrayList<DemoModel>(demoData);
     }
 
-    public static final void removeItemFromList(int position) {
-        demoMap.remove(demoData.get(position).id);
+    public static final List<DemoModel> removeItemFromList(int position) {
         demoData.remove(position);
+        demoMap.remove(demoData.get(position).id);
+        return new ArrayList<DemoModel>(demoData);
     }
 
     public static DemoModel findById(int id) {
