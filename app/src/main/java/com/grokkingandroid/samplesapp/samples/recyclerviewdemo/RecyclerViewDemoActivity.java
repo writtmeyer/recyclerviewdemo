@@ -10,11 +10,14 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.ChangeTransform;
+import android.view.ActionMode;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageButton;
 
 import java.util.Date;
 import java.util.List;
@@ -24,12 +27,15 @@ import static android.view.GestureDetector.SimpleOnGestureListener;
 public class RecyclerViewDemoActivity
         extends Activity
         implements RecyclerView.OnItemTouchListener,
-        View.OnClickListener {
+        View.OnClickListener,
+        ActionMode.Callback {
 
     RecyclerView recyclerView;
     RecyclerViewDemoAdapter adapter;
     int itemCount;
     GestureDetectorCompat gestureDetector;
+    ActionMode actionMode;
+    ImageButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +45,7 @@ public class RecyclerViewDemoActivity
         getWindow().setSharedElementExitTransition(new ChangeTransform());
 
         setContentView(R.layout.activity_recyclerview_demo);
+        fab = (ImageButton) findViewById(R.id.fab_add);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -51,7 +58,7 @@ public class RecyclerViewDemoActivity
         recyclerView.setLayoutManager(layoutManager);
 
 
-        // allows for optimizations:
+        // allows for optimizations if all items are of the same size:
         recyclerView.setHasFixedSize(true);
 
         List<DemoModel> items = RecyclerViewDemoApp.getDemoData();
@@ -62,10 +69,10 @@ public class RecyclerViewDemoActivity
                 new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
 
-        // that's the deault, you can of course use a custom ItemAnimator, if you like
+        // this is the default; this call is actually only necessary with custom ItemAnimators
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        // onClickDetection done in this Activity's onItemTouchListener
+        // onClickDetection is done in this Activity's onItemTouchListener
         // with the help of a GestureDetector;
         // Tip by Ian Lake on G+ in a comment to this post:
         // https://plus.google.com/+LucasRocha/posts/37U8GWtYxDE
@@ -109,7 +116,6 @@ public class RecyclerViewDemoActivity
         // otherwise the view would be inserted before the first
         // visible item; that is outside of the viewable area
         position++;
-        // PseuodDAO
         RecyclerViewDemoApp.addItemToList(model, position);
         adapter.addData(model, position);
     }
@@ -130,6 +136,10 @@ public class RecyclerViewDemoActivity
         else if (view.getId() == R.id.container_list_item) {
             // item click
             int idx = recyclerView.getChildPosition(view);
+            if (actionMode != null) {
+                myToggleSelection(idx);
+                return;
+            }
             DemoModel data = adapter.getItem(idx);
             View innerContainer = view.findViewById(R.id.container_inner_item);
             innerContainer.setViewName(Constants.NAME_INNER_CONTAINER + "_" + data.id);
@@ -139,6 +149,12 @@ public class RecyclerViewDemoActivity
                     .makeSceneTransitionAnimation(this, innerContainer, Constants.NAME_INNER_CONTAINER);
             this.startActivity(startIntent, options.toBundle());
         }
+    }
+
+    private void myToggleSelection(int idx) {
+        adapter.toggleSelection(idx);
+        String title = getString(R.string.selected_count, adapter.getSelectedItemCount());
+        actionMode.setTitle(title);
     }
 
     @Override
@@ -151,12 +167,63 @@ public class RecyclerViewDemoActivity
     public void onTouchEvent(RecyclerView rv, MotionEvent e) {
     }
 
+    @Override
+    public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+        // Inflate a menu resource providing context menu items
+        MenuInflater inflater = actionMode.getMenuInflater();
+        inflater.inflate(R.menu.menu_cab_recyclerviewdemoactivity, menu);
+        fab.setVisibility(View.GONE);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.menu_delete:
+                List<Integer> selectedItemPositions = adapter.getSelectedItems();
+                int currPos;
+                for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+                    currPos = selectedItemPositions.get(i);
+                    RecyclerViewDemoApp.removeItemFromList(currPos);
+                    adapter.removeData(currPos);
+                }
+                actionMode.finish();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode actionMode) {
+        this.actionMode = null;
+        adapter.clearSelections();
+        fab.setVisibility(View.VISIBLE);
+    }
+
     private class RecyclerViewDemoOnGestureListener extends SimpleOnGestureListener {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             View view = recyclerView.findChildViewUnder(e.getX(), e.getY());
             onClick(view);
             return super.onSingleTapConfirmed(e);
+        }
+
+        public void onLongPress(MotionEvent e) {
+            View view = recyclerView.findChildViewUnder(e.getX(), e.getY());
+            if (actionMode != null) {
+                return;
+            }
+            // Start the CAB using the ActionMode.Callback defined above
+            actionMode = startActionMode(RecyclerViewDemoActivity.this);
+            int idx = recyclerView.getChildPosition(view);
+            myToggleSelection(idx);
+            super.onLongPress(e);
         }
     }
 }
