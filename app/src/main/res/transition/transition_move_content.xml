@@ -2,14 +2,14 @@
 <transitionSet xmlns:android="http://schemas.android.com/apk/res/android">
     <changeBounds>
         <targets>
-            <target android:targetId="@id/container_inner_item" android:targetViewName="innerContainer"/>
-            <target android:targetId="@id/container_inner_item" android:targetViewName="innerContainer"/>
+            <target android:targetId="@id/container_inner_item" android:targetName="innerContainer"/>
+            <target android:targetId="@id/container_inner_item" android:targetName="innerContainer"/>
         </targets>
     </changeBounds>
     <changeTransform>
         <targets>
-            <target android:targetId="@id/container_inner_item" android:targetViewName="innerContainer"/>
-            <target android:targetId="@id/container_inner_item" android:targetViewName="innerContainer"/>
+            <target android:targetId="@id/container_inner_item" android:targetName="innerContainer"/>
+            <target android:targetId="@id/container_inner_item" android:targetName="innerContainer"/>
         </targets>
     </changeTransform>
 </transitionSet>
