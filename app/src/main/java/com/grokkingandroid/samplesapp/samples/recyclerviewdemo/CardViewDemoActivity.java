@@ -1,6 +1,8 @@
 package com.grokkingandroid.samplesapp.samples.recyclerviewdemo;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.text.format.DateUtils;
@@ -13,6 +15,7 @@ public class CardViewDemoActivity extends Activity {
 
     CardView cardView;
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,11 +28,11 @@ public class CardViewDemoActivity extends Activity {
         DemoModel model = RecyclerViewDemoApp.findById(id);
 
         setContentView(R.layout.activity_cardview_demo);
-        cardView = (CardView)findViewById(R.id.card_detail);
+        cardView = (CardView) findViewById(R.id.card_detail);
         View innerContainer = cardView.findViewById(R.id.container_inner_item);
-        innerContainer.setViewName(Constants.NAME_INNER_CONTAINER);
-        TextView label = (TextView)cardView.findViewById(R.id.txt_label_item);
-        TextView dateTime = (TextView)cardView.findViewById(R.id.txt_date_time);
+        innerContainer.setTransitionName(Constants.NAME_INNER_CONTAINER);
+        TextView label = (TextView) cardView.findViewById(R.id.txt_label_item);
+        TextView dateTime = (TextView) cardView.findViewById(R.id.txt_date_time);
         label.setText(model.label);
         String dateStr = DateUtils.formatDateTime(
                 this,

@@ -13,8 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainActivity"
-        tools:listitem="@layout/item_demo_01"
-        />
+        tools:listitem="@layout/item_demo_01" />
 
     <ImageButton
         android:id="@+id/fab_add"
@@ -28,6 +27,5 @@
         android:background="@drawable/ripple"
         android:stateListAnimator="@anim/anim"
         android:src="@drawable/ic_action_add"
-        android:elevation="1dp"
-        />
+        android:elevation="1dp" />
 </RelativeLayout>

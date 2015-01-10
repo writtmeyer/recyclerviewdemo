@@ -1,9 +1,12 @@
 package com.grokkingandroid.samplesapp.samples.recyclerviewdemo;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Outline;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -16,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewOutlineProvider;
 import android.view.Window;
 import android.widget.ImageButton;
 
@@ -24,6 +28,7 @@ import java.util.List;
 
 import static android.view.GestureDetector.SimpleOnGestureListener;
 
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class RecyclerViewDemoActivity
         extends Activity
         implements RecyclerView.OnItemTouchListener,
@@ -36,11 +41,14 @@ public class RecyclerViewDemoActivity
     GestureDetectorCompat gestureDetector;
     ActionMode actionMode;
     ImageButton fab;
+    Context mContext;
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setAllowExitTransitionOverlap(true);
+        mContext = this;
+        getWindow().setAllowReturnTransitionOverlap(true);
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         getWindow().setSharedElementExitTransition(new ChangeTransform());
 
@@ -81,11 +89,7 @@ public class RecyclerViewDemoActivity
                 new GestureDetectorCompat(this, new RecyclerViewDemoOnGestureListener());
 
         // fab
-        int size = getResources().getDimensionPixelSize(R.dimen.fab_size);
-        Outline outline = new Outline();
-        outline.setOval(0, 0, size, size);
         View fab = findViewById(R.id.fab_add);
-        fab.setOutline(outline);
         fab.setOnClickListener(this);
     }
 
@@ -127,13 +131,13 @@ public class RecyclerViewDemoActivity
         adapter.removeData(position);
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.fab_add) {
             // fab click
             addItemToList();
-        }
-        else if (view.getId() == R.id.container_list_item) {
+        } else if (view.getId() == R.id.container_list_item) {
             // item click
             int idx = recyclerView.getChildPosition(view);
             if (actionMode != null) {
@@ -142,7 +146,7 @@ public class RecyclerViewDemoActivity
             }
             DemoModel data = adapter.getItem(idx);
             View innerContainer = view.findViewById(R.id.container_inner_item);
-            innerContainer.setViewName(Constants.NAME_INNER_CONTAINER + "_" + data.id);
+            innerContainer.setTransitionName(Constants.NAME_INNER_CONTAINER + "_" + data.id);
             Intent startIntent = new Intent(this, CardViewDemoActivity.class);
             startIntent.putExtra(Constants.KEY_ID, data.id);
             ActivityOptions options = ActivityOptions
